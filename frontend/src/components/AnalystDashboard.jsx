@@ -9,7 +9,7 @@ export default function AnalystDashboard() {
 
  useEffect(() => {
   fetch(`${import.meta.env.VITE_BACKEND_URL}/api/review/`, {
-    headers: authProvider.getAuthHeaders() // Delivers the correct "Bearer <access_token>" key sequence
+    headers: authProvider.getAuthHeaders()
   })
   .then(res => {
     if (!res.ok) throw new Error("Ledger retrieval failure.");

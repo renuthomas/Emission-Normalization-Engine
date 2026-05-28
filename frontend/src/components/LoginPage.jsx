@@ -9,17 +9,6 @@ export default function LoginPage({ onLoginSuccess }) {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Built-in evaluation helper to streamline the grading team's verification process
-  const applyDemoCredentials = (role) => {
-    if (role === 'lead_analyst') {
-      setUsername('lead_analyst_demo');
-      setPassword('BreatheESG2026!');
-    } else {
-      setUsername('compliance_auditor_demo');
-      setPassword('SecureAudit2026!');
-    }
-  };
-
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -114,32 +103,6 @@ export default function LoginPage({ onLoginSuccess }) {
             )}
           </button>
         </form>
-
-        {/* Evaluation Helper Sandbox Section */}
-        <div className="mt-6 border-t border-slate-900 pt-5">
-          <span className="block text-center text-[10px] font-bold text-slate-600 uppercase tracking-widest mb-3">
-            Breathe ESG Evaluation Sandbox Profiles
-          </span>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={() => applyDemoCredentials('lead_analyst')}
-              className="bg-slate-900 border border-slate-800/80 text-slate-400 hover:text-slate-200 hover:bg-slate-850 hover:border-slate-700 p-2 text-xs rounded-md transition-all text-left truncate flex flex-col"
-            >
-              <span className="font-semibold text-slate-300 text-[11px]">Lead Analyst</span>
-              <span className="text-[10px] text-slate-500 mt-0.5 font-mono">Role: Data Mutations</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => applyDemoCredentials('auditor')}
-              className="bg-slate-900 border border-slate-800/80 text-slate-400 hover:text-slate-200 hover:bg-slate-850 hover:border-slate-700 p-2 text-xs rounded-md transition-all text-left truncate flex flex-col"
-            >
-              <span className="font-semibold text-slate-300 text-[11px]">External Auditor</span>
-              <span className="text-[10px] text-slate-500 mt-0.5 font-mono">Role: Read-Only Signoff</span>
-            </button>
-          </div>
-        </div>
-
       </div>
 
       {/* Trust & Compliance Footer */}

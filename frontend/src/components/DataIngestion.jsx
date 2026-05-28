@@ -15,7 +15,7 @@ export default function DataIngestion() {
   };
 
   const validateFileMatchesSource = (file, source) => {
-    if (!file) return true; // Skip validation if no file
+    if (!file) return true; 
     
     const fileName = file.name.toLowerCase();
     const patterns = sourceFilePatterns[source] || [];
@@ -61,7 +61,6 @@ export default function DataIngestion() {
   setUploading(true);
   setTelemetryLog(null);
 
-  // 1. Package the form attributes cleanly
   const payload = new FormData();
   payload.append('file', uploadFile);
   payload.append('source_type', selectedSource);
@@ -70,20 +69,17 @@ export default function DataIngestion() {
   payload.append('source_id', mockSourceMap[selectedSource]);
 
   try {
-    // 2. CRITICAL: Fetch ONLY the token string, DO NOT inherit the application/json header string
     const accessToken = localStorage.getItem('access_token');
     
-    // Build a pristine, isolated headers envelope explicitly for multipart streams
     const uploadHeaders = {};
     if (accessToken) {
       uploadHeaders['Authorization'] = `Bearer ${accessToken}`;
     }
 
-    // 3. Fire the clean network request
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/ingest/`, {
       method: 'POST',
-      headers: uploadHeaders, // Uses clean headers containing ONLY the authorization token
-      body: payload           // Browser automatically appends multipart/form-data with boundaries
+      headers: uploadHeaders, 
+      body: payload           
     });
 
     const result = await response.json();
@@ -173,7 +169,7 @@ export default function DataIngestion() {
           {/* Validation Error Display */}
           {validationError && (
             <div className="bg-red-950/30 border border-red-900/60 text-red-400 p-3 rounded-lg flex items-start gap-2">
-              <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="w-5 h-5 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
               </svg>
               <div className="text-xs">
