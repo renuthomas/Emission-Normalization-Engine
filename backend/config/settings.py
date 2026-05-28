@@ -28,7 +28,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", ".onrender.com,localhost,127.0.0.1").split(",")
 
 from datetime import timedelta
 
@@ -76,7 +76,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS =os.getenv("CORS_ALLOWED_ORIGINS").split(",")
+CORS_ALLOWED_ORIGINS =os.getenv("CORS_ALLOWED_ORIGINS","").split(",")
 CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'config.urls'
@@ -111,7 +111,8 @@ if DEBUG:
     }
 else:
     DATABASES = {
-        'default': dj_database_url.config(
+        'default': dj_database_url.parse(
+            os.environ.get("DATABASE_URL"),
             conn_max_age=600,
             ssl_require=True
         )
