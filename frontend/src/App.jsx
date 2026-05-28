@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import LoginPage from './components/LoginPage.jsx'; 
 import AnalystDashboard from './components/AnalystDashboard.jsx'; 
-import DataIngestion from './components/DataIngestion.jsx.jsx'; 
+import DataIngestion from './components/DataIngestion.jsx'; 
 import toast,{Toaster} from "react-hot-toast"
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(
