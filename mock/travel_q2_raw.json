@@ -1,0 +1,23 @@
+[
+  {
+    "category": "FLIGHT",
+    "distance_km": "1120.40",
+    "booking_start": "2026-05-10",
+    "booking_end": "2026-05-10",
+    "raw_unit": "KM"
+  },
+  {
+    "category": "HOTEL",
+    "hotel_nights": 0,
+    "booking_start": "2026-05-10",
+    "booking_end": "2026-05-12",
+    "distance_km": "0"
+  },
+  {
+    "category": "FLIGHT",
+    "distance_km": "18900.00",
+    "booking_start": "2026-05-14",
+    "booking_end": "2026-05-15",
+    "raw_unit": "KM"
+  }
+]
