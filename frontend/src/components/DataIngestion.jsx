@@ -5,10 +5,40 @@ export default function DataIngestion() {
   const [uploadFile, setUploadFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [telemetryLog, setTelemetryLog] = useState(null);
+  const [validationError, setValidationError] = useState(null);
+
+  // Validation mapping: source type to expected filename patterns
+  const sourceFilePatterns = {
+    'SAP': ['sap'],
+    'UTILITY': ['utility'],
+    'TRAVEL': ['travel']
+  };
+
+  const validateFileMatchesSource = (file, source) => {
+    if (!file) return true; // Skip validation if no file
+    
+    const fileName = file.name.toLowerCase();
+    const patterns = sourceFilePatterns[source] || [];
+    
+    const matches = patterns.some(pattern => fileName.includes(pattern));
+    
+    if (!matches) {
+      return `File mismatch: "${file.name}" does not match the selected "${source}" source. Expected filename to contain: ${patterns.join(' or ')}.`;
+    }
+    
+    return null; 
+  };
 
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       setUploadFile(e.target.files[0]);
+      setValidationError(null);
+      
+      // Validate file on selection
+      const error = validateFileMatchesSource(e.target.files[0], selectedSource);
+      if (error) {
+        setValidationError(error);
+      }
     }
   };
 
@@ -18,6 +48,15 @@ export default function DataIngestion() {
     alert("Please attach a valid source data file to process.");
     return;
   }
+
+  // Validate file matches selected source
+  const validationErrorMsg = validateFileMatchesSource(uploadFile, selectedSource);
+  if (validationErrorMsg) {
+    setValidationError(validationErrorMsg);
+    return;
+  }
+
+  setValidationError(null);
 
   setUploading(true);
   setTelemetryLog(null);
@@ -41,7 +80,7 @@ export default function DataIngestion() {
     }
 
     // 3. Fire the clean network request
-    const response = await fetch('http://127.0.0.1:8000/api/ingest/', {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/ingest/`, {
       method: 'POST',
       headers: uploadHeaders, // Uses clean headers containing ONLY the authorization token
       body: payload           // Browser automatically appends multipart/form-data with boundaries
@@ -87,7 +126,17 @@ export default function DataIngestion() {
                 <button
                   type="button"
                   key={src.id}
-                  onClick={() => setSelectedSource(src.id)}
+                  onClick={() => {
+                    setSelectedSource(src.id);
+                    setValidationError(null);
+                    // Re-validate current file against new source
+                    if (uploadFile) {
+                      const error = validateFileMatchesSource(uploadFile, src.id);
+                      if (error) {
+                        setValidationError(error);
+                      }
+                    }
+                  }}
                   className={`p-4 border text-left rounded-lg transition-all duration-150 flex flex-col ${
                     selectedSource === src.id 
                       ? 'bg-indigo-950/40 border-indigo-500 ring-1 ring-indigo-500' 
@@ -115,17 +164,30 @@ export default function DataIngestion() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
               <div className="text-sm text-slate-300 font-medium">
-                {uploadFile ? <span className="text-indigo-400 font-mono font-bold">{uploadFile.name}</span> : 'Select raw client report document'}
+                {uploadFile ? <span className={`font-mono font-bold ${validationError ? 'text-red-400' : 'text-indigo-400'}`}>{uploadFile.name}</span> : 'Select raw client report document'}
               </div>
               <p className="text-xs text-slate-500">Supports raw operational ledger exports (.csv, .json)</p>
             </div>
           </div>
 
+          {/* Validation Error Display */}
+          {validationError && (
+            <div className="bg-red-950/30 border border-red-900/60 text-red-400 p-3 rounded-lg flex items-start gap-2">
+              <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+              <div className="text-xs">
+                <span className="font-bold block mb-1">File Source Mismatch</span>
+                <span className="text-red-300">{validationError}</span>
+              </div>
+            </div>
+          )}
+
           {/* Submit Action Block */}
           <div className="flex justify-end pt-2">
             <button
               type="submit"
-              disabled={uploading}
+              disabled={uploading || !!validationError}
               className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-800/40 text-white font-semibold py-2.5 px-6 rounded-lg text-sm transition-all shadow-md flex items-center gap-2"
             >
               {uploading ? (

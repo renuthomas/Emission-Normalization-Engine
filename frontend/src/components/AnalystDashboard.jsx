@@ -8,7 +8,7 @@ export default function AnalystDashboard() {
   const [reason, setReason] = useState("");
 
  useEffect(() => {
-  fetch('http://127.0.0.1:8000/api/review/', {
+  fetch(`${import.meta.env.VITE_BACKEND_URL}/api/review/`, {
     headers: authProvider.getAuthHeaders() // Delivers the correct "Bearer <access_token>" key sequence
   })
   .then(res => {
@@ -25,7 +25,7 @@ export default function AnalystDashboard() {
     return;
   }
 
-  fetch(`http://127.0.0.1:8000/api/review/${id}/`, {
+  fetch(`${import.meta.env.VITE_BACKEND_URL}/api/review/${id}/`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
