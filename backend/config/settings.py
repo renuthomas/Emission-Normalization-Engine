@@ -121,6 +121,8 @@ else:
             ssl_require=True
         )
     }
+    
+print("DB CONNECTED TO:", DATABASES)
 
 
 # Password validation
